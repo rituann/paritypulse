@@ -5,13 +5,11 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
@@ -22,8 +20,8 @@ import {
   X,
   TrendingUp,
   Globe2,
-  Zap,
   MapPin,
+  Briefcase,
 } from "lucide-react";
 import type { ShadowPriceResult, TickerItem } from "@shared/schema";
 
@@ -36,6 +34,8 @@ interface BasketSidebarProps {
   onTickerChange: (ticker: TickerItem[]) => void;
   userLocation: { lat: number; lng: number } | null;
   onLocationChange: (location: { lat: number; lng: number } | null) => void;
+  tariffSensitivity: number;
+  onTariffChange: (value: number) => void;
 }
 
 export function BasketSidebar({
@@ -43,6 +43,8 @@ export function BasketSidebar({
   onTickerChange,
   userLocation,
   onLocationChange,
+  tariffSensitivity,
+  onTariffChange,
 }: BasketSidebarProps) {
   const [items, setItems] = useState<string[]>([]);
   const { toast } = useToast();
@@ -53,7 +55,7 @@ export function BasketSidebar({
   });
 
   const calculateMutation = useMutation({
-    mutationFn: async (data: { items: string[]; location: { lat: number; lng: number } | null }) => {
+    mutationFn: async (data: { items: string[]; location: { lat: number; lng: number } | null; tariffSensitivity: number }) => {
       const response = await apiRequest("POST", "/api/calculate-shadow-price", data);
       const json = await response.json();
       return json as { results: ShadowPriceResult[]; ticker: any[] };
@@ -105,7 +107,7 @@ export function BasketSidebar({
       });
       return;
     }
-    calculateMutation.mutate({ items, location: userLocation });
+    calculateMutation.mutate({ items, location: userLocation, tariffSensitivity });
   };
 
   const detectLocation = () => {
@@ -135,34 +137,32 @@ export function BasketSidebar({
   };
 
   return (
-    <aside className="w-80 h-screen glass-strong flex flex-col border-r border-white/5 z-50">
-      <div className="p-6 border-b border-white/5">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 rounded-md bg-primary/20 neon-glow-green">
+    <aside className="w-96 h-screen bg-sidebar flex flex-col border-r border-border z-50">
+      <div className="p-6 border-b border-border">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="p-2 rounded bg-primary/10">
             <Globe2 className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1
-              className="font-mono text-lg font-bold tracking-tight"
+              className="font-serif text-xl font-bold tracking-tight text-foreground"
               data-testid="text-title"
             >
-              PARITY PULSE
+              ParityPulse
             </h1>
-            <p className="text-xs text-muted-foreground font-mono tracking-widest">
-              PPP INTELLIGENCE
+            <p className="text-xs text-muted-foreground tracking-wide">
+              Global Economic Resilience Engine
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-6 space-y-6">
+      <div className="flex-1 overflow-auto p-6 space-y-8">
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Zap className="w-4 h-4 text-primary" />
-            <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-              Your Location
-            </h2>
-          </div>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+            <MapPin className="w-3.5 h-3.5" />
+            Your Location
+          </h2>
           <Button
             variant="outline"
             className="w-full justify-start gap-2"
@@ -177,12 +177,10 @@ export function BasketSidebar({
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-4 h-4 text-primary" />
-            <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-              Lifestyle Basket
-            </h2>
-          </div>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+            <Briefcase className="w-3.5 h-3.5" />
+            Lifestyle Basket
+          </h2>
 
           <Form {...form}>
             <form
@@ -197,7 +195,7 @@ export function BasketSidebar({
                     <FormControl>
                       <Input
                         placeholder="e.g. Gasoline, Eggs, Rent..."
-                        className="bg-muted/50 border-white/10 font-mono text-sm"
+                        className="text-sm"
                         data-testid="input-basket-item"
                         {...field}
                       />
@@ -220,25 +218,24 @@ export function BasketSidebar({
 
           <div className="space-y-2">
             {items.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">
+              <p className="text-sm text-muted-foreground text-center py-6 border border-dashed border-border rounded">
                 Add 1-5 items to compare global prices
               </p>
             ) : (
               items.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 rounded-md bg-muted/30 border border-white/5"
+                  className="flex items-center justify-between p-3 rounded bg-muted/50 border border-border"
                   data-testid={`basket-item-${index}`}
                 >
-                  <span className="font-mono text-sm">{item}</span>
+                  <span className="text-sm font-medium">{item}</span>
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-6 w-6"
                     onClick={() => removeItem(index)}
                     data-testid={`button-remove-item-${index}`}
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </div>
               ))
@@ -246,7 +243,7 @@ export function BasketSidebar({
           </div>
 
           <div className="flex items-center justify-between mt-4">
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="text-xs text-muted-foreground">
               {items.length}/5 items
             </span>
             <div className="flex gap-1">
@@ -254,7 +251,7 @@ export function BasketSidebar({
                 <div
                   key={i}
                   className={`w-2 h-2 rounded-full ${
-                    i < items.length ? "bg-primary" : "bg-muted"
+                    i < items.length ? "bg-primary" : "bg-border"
                   }`}
                 />
               ))}
@@ -262,31 +259,57 @@ export function BasketSidebar({
           </div>
         </div>
 
+        <div>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+            <TrendingUp className="w-3.5 h-3.5" />
+            Trade/Tariff Sensitivity
+          </h2>
+          <div className="space-y-3">
+            <input
+              type="range"
+              min="0"
+              max="50"
+              value={tariffSensitivity}
+              onChange={(e) => onTariffChange(parseInt(e.target.value))}
+              className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
+              data-testid="slider-tariff"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Baseline</span>
+              <span className="font-medium text-foreground">+{tariffSensitivity}% Import Costs</span>
+              <span>+50%</span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Simulates price increases on import-dependent goods to model trade policy impacts.
+            </p>
+          </div>
+        </div>
+
         <div className="space-y-3">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-            <Calculator className="w-4 h-4" />
-            Quick Stats
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <Calculator className="w-3.5 h-3.5" />
+            Coverage
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-md bg-muted/20 border border-white/5">
-              <p className="text-xs text-muted-foreground font-mono mb-1">
+            <div className="p-4 rounded bg-card border border-border">
+              <p className="text-xs text-muted-foreground mb-1">
                 Countries
               </p>
-              <p className="text-xl font-mono font-bold text-primary">195</p>
+              <p className="text-2xl font-bold text-primary">50+</p>
             </div>
-            <div className="p-3 rounded-md bg-muted/20 border border-white/5">
-              <p className="text-xs text-muted-foreground font-mono mb-1">
+            <div className="p-4 rounded bg-card border border-border">
+              <p className="text-xs text-muted-foreground mb-1">
                 Data Points
               </p>
-              <p className="text-xl font-mono font-bold">2.4K</p>
+              <p className="text-2xl font-bold">2.4K</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="p-6 border-t border-white/5">
+      <div className="p-6 border-t border-border">
         <Button
-          className="w-full font-mono tracking-wide neon-glow-green"
+          className="w-full tracking-wide"
           size="lg"
           onClick={handleCalculate}
           disabled={calculateMutation.isPending || items.length === 0}
@@ -295,12 +318,12 @@ export function BasketSidebar({
           {calculateMutation.isPending ? (
             <>
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-              ANALYZING...
+              Analyzing...
             </>
           ) : (
             <>
               <Calculator className="w-4 h-4 mr-2" />
-              CALCULATE INDEX
+              Calculate Parity Index
             </>
           )}
         </Button>

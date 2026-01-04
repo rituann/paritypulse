@@ -14,31 +14,31 @@ export function LiveTicker({ items }: LiveTickerProps) {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 h-12 glass-strong border-t border-white/5 z-40 overflow-hidden"
+      className="fixed bottom-0 left-0 right-0 h-10 bg-card border-t border-border z-40 overflow-hidden"
       data-testid="live-ticker"
     >
       <div className="ticker-scroll flex items-center h-full">
         {duplicatedItems.map((item, index) => (
           <div
             key={`${item.symbol}-${index}`}
-            className="flex items-center gap-4 px-6 border-r border-white/10 shrink-0"
+            className="flex items-center gap-4 px-6 border-r border-border shrink-0"
           >
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-muted-foreground uppercase">
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">
                 {item.symbol}
               </span>
-              <span className="font-mono text-sm font-medium">
+              <span className="text-sm font-medium">
                 {item.name}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-mono text-sm font-bold tabular-nums">
+              <span className="text-sm font-bold tabular-nums">
                 ${item.price.toFixed(2)}
               </span>
               <div
                 className={`flex items-center gap-1 ${
-                  item.change >= 0 ? "text-neon-green" : "text-neon-red"
+                  item.change >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
                 {item.change >= 0 ? (
@@ -46,7 +46,7 @@ export function LiveTicker({ items }: LiveTickerProps) {
                 ) : (
                   <TrendingDown className="w-3 h-3" />
                 )}
-                <span className="font-mono text-xs tabular-nums">
+                <span className="text-xs tabular-nums">
                   {item.change >= 0 ? "+" : ""}
                   {item.changePercent.toFixed(2)}%
                 </span>
@@ -61,7 +61,7 @@ export function LiveTicker({ items }: LiveTickerProps) {
 
 export function TickerSkeleton() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-12 glass-strong border-t border-white/5 z-40">
+    <div className="fixed bottom-0 left-0 right-0 h-10 bg-card border-t border-border z-40">
       <div className="flex items-center h-full px-6 gap-8">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex items-center gap-4">

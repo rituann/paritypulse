@@ -87,6 +87,9 @@ export interface ShadowPriceResult {
   latitude: number;
   longitude: number;
   isValueDeal: boolean;
+  workHours?: number;
+  annualWage?: number;
+  macroStability?: "Stable" | "Moderate" | "Volatile";
 }
 
 export interface TickerItem {

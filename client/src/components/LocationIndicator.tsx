@@ -9,7 +9,7 @@ export function LocationIndicator({ location }: LocationIndicatorProps) {
 
   return (
     <div
-      className="absolute top-6 left-6 z-10 glass rounded-md p-3 flex items-center gap-2"
+      className="absolute top-6 left-6 z-10 bg-card border border-border rounded shadow-sm p-3 flex items-center gap-3"
       data-testid="location-indicator"
     >
       <div className="relative">
@@ -17,8 +17,8 @@ export function LocationIndicator({ location }: LocationIndicatorProps) {
         <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-ping" />
       </div>
       <div>
-        <p className="text-xs font-mono text-muted-foreground">Your Location</p>
-        <p className="text-sm font-mono font-medium">
+        <p className="text-xs text-muted-foreground uppercase tracking-wide">Your Location</p>
+        <p className="text-sm font-medium tabular-nums">
           {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
         </p>
       </div>

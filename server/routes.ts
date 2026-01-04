@@ -151,7 +151,8 @@ Respond with JSON array in format:
 
 function calculateShadowPriceIndex(
   mappedCommodities: MappedCommodity[],
-  userLocation: { lat: number; lng: number } | null
+  userLocation: { lat: number; lng: number } | null,
+  tariffSensitivity: number = 0
 ): ShadowPriceResult[] {
   const userCountry = userLocation
     ? COUNTRY_DATA.reduce((closest, country) => {
@@ -174,12 +175,25 @@ function calculateShadowPriceIndex(
 
   const results: ShadowPriceResult[] = COUNTRY_DATA.map((country) => {
     const pppRatio = country.ppp / userCountry.ppp;
-    const wageRatio = country.wage / userCountry.wage;
     
-    const adjustedCost = userBasketCost * pppRatio;
-    const shadowPriceIndex = adjustedCost / userBasketCost * (1 / wageRatio) * wageRatio;
+    const importDependency = country.ppp < 0.5 ? 0.7 : country.ppp < 0.8 ? 0.4 : 0.2;
+    const tariffImpact = (tariffSensitivity / 100) * importDependency;
+    const tariffMultiplier = 1 + tariffImpact;
     
-    const normalizedIndex = pppRatio;
+    const adjustedCost = userBasketCost * pppRatio * tariffMultiplier;
+    const normalizedIndex = pppRatio * tariffMultiplier;
+    
+    const hourlyWage = country.wage / 2080;
+    const workHours = Math.min(adjustedCost / hourlyWage, 999);
+    
+    let macroStability: "Stable" | "Moderate" | "Volatile";
+    if (normalizedIndex >= 0.8 && normalizedIndex <= 1.2 && country.ppp >= 0.5) {
+      macroStability = "Stable";
+    } else if (normalizedIndex < 0.5 || country.ppp < 0.3) {
+      macroStability = "Volatile";
+    } else {
+      macroStability = "Moderate";
+    }
 
     return {
       countryCode: country.code,
@@ -190,6 +204,9 @@ function calculateShadowPriceIndex(
       latitude: country.lat,
       longitude: country.lng,
       isValueDeal: normalizedIndex < 0.7,
+      workHours: Math.round(workHours * 10) / 10,
+      annualWage: country.wage,
+      macroStability,
     };
   });
 
@@ -218,6 +235,7 @@ const calculateSchema = z.object({
       lng: z.number(),
     })
     .nullable(),
+  tariffSensitivity: z.number().min(0).max(50).default(0),
 });
 
 export async function registerRoutes(
@@ -232,10 +250,10 @@ export async function registerRoutes(
         return res.status(400).json({ error: parsed.error.message });
       }
 
-      const { items, location } = parsed.data;
+      const { items, location, tariffSensitivity } = parsed.data;
 
       const mappedCommodities = await mapItemsToCommodities(items);
-      const results = calculateShadowPriceIndex(mappedCommodities, location);
+      const results = calculateShadowPriceIndex(mappedCommodities, location, tariffSensitivity || 0);
       const ticker = generateTickerData(mappedCommodities);
 
       res.json({ results, ticker, mappedCommodities });
@@ -269,6 +287,53 @@ export async function registerRoutes(
         pppFactor: c.ppp,
       }))
     );
+  });
+
+  app.post("/api/consultant-brief", async (req, res) => {
+    try {
+      const { countryName, shadowPriceIndex, basketCost, adjustedCost, workHours, macroStability, annualWage } = req.body;
+      
+      const prompt = `You are an elite McKinsey consultant providing a brief executive analysis. 
+Given the following data for ${countryName}:
+- Parity Pulse Index: ${shadowPriceIndex}x (1.0 = parity with user's location)
+- Basket Cost (PPP adjusted): $${adjustedCost?.toFixed(2)}
+- Work Hours to Afford Basket: ${workHours} hours
+- Macro-Stability Assessment: ${macroStability}
+- Average Annual Wage: $${annualWage?.toLocaleString()}
+
+Provide exactly 3 bullet points in this JSON format:
+{
+  "economicOpportunity": "One concise sentence about cost arbitrage or value proposition",
+  "laborRisks": "One concise sentence about workforce or operational considerations",
+  "policyImplications": "One concise sentence about regulatory or trade policy factors"
+}
+
+Be specific, data-driven, and actionable. Avoid generic statements.`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+        max_completion_tokens: 300,
+      });
+
+      const content = response.choices[0]?.message?.content || "{}";
+      const parsed = JSON.parse(content);
+      
+      res.json({
+        economicOpportunity: parsed.economicOpportunity || "Analysis unavailable",
+        laborRisks: parsed.laborRisks || "Analysis unavailable",
+        policyImplications: parsed.policyImplications || "Analysis unavailable",
+      });
+    } catch (error) {
+      console.error("Consultant brief error:", error);
+      res.status(500).json({ 
+        error: "Failed to generate brief",
+        economicOpportunity: "Economic analysis temporarily unavailable",
+        laborRisks: "Labor risk assessment pending",
+        policyImplications: "Policy analysis in progress"
+      });
+    }
   });
 
   return httpServer;

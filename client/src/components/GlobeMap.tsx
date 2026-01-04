@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Globe2, AlertTriangle } from "lucide-react";
@@ -13,11 +13,11 @@ interface GlobeMapProps {
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 function getHeatColor(index: number): string {
-  if (index <= 0.6) return "#22c55e";
-  if (index <= 0.8) return "#84cc16";
-  if (index <= 1.0) return "#eab308";
-  if (index <= 1.2) return "#f97316";
-  return "#ef4444";
+  if (index <= 0.6) return "#16A34A";
+  if (index <= 0.8) return "#65A30D";
+  if (index <= 1.0) return "#CA8A04";
+  if (index <= 1.2) return "#EA580C";
+  return "#DC2626";
 }
 
 function checkWebGLSupport(): boolean {
@@ -36,18 +36,18 @@ function FallbackGlobe({ results, onCountrySelect }: { results: ShadowPriceResul
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-background p-8" data-testid="globe-fallback">
       <div className="text-center max-w-lg">
-        <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
           <Globe2 className="w-10 h-10 text-primary" />
         </div>
-        <h2 className="font-mono text-xl font-bold mb-3">3D Globe Unavailable</h2>
+        <h2 className="font-serif text-xl font-bold mb-3">3D Globe Unavailable</h2>
         <p className="text-muted-foreground text-sm mb-6">
           WebGL is required to display the interactive 3D globe. Your browser or environment doesn't support WebGL.
         </p>
         
         {results && results.length > 0 && (
-          <div className="mt-6 border border-white/10 rounded-md overflow-hidden">
-            <div className="bg-muted/20 px-4 py-2 border-b border-white/10">
-              <h3 className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
+          <div className="mt-6 border border-border rounded overflow-hidden bg-card">
+            <div className="bg-muted px-4 py-3 border-b border-border">
+              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
                 Top Value Countries
               </h3>
             </div>
@@ -55,7 +55,7 @@ function FallbackGlobe({ results, onCountrySelect }: { results: ShadowPriceResul
               {results.slice(0, 10).map((result) => (
                 <button
                   key={result.countryCode}
-                  className="w-full px-4 py-3 flex items-center justify-between border-b border-white/5 hover-elevate text-left"
+                  className="w-full px-4 py-3 flex items-center justify-between border-b border-border hover-elevate text-left"
                   onClick={() => onCountrySelect(result)}
                   data-testid={`fallback-country-${result.countryCode}`}
                 >
@@ -64,11 +64,11 @@ function FallbackGlobe({ results, onCountrySelect }: { results: ShadowPriceResul
                     <span className="text-muted-foreground text-sm ml-2">({result.countryCode})</span>
                   </div>
                   <span
-                    className={`font-mono font-bold ${
+                    className={`font-bold ${
                       result.shadowPriceIndex < 0.9
-                        ? "text-neon-green"
+                        ? "status-positive"
                         : result.shadowPriceIndex > 1.1
-                        ? "text-neon-red"
+                        ? "status-negative"
                         : ""
                     }`}
                   >
@@ -97,7 +97,7 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
     try {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/dark-v11",
+        style: "mapbox://styles/mapbox/light-v11",
         center: [0, 20],
         zoom: 1.5,
         projection: "globe",
@@ -113,11 +113,11 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
         if (!map.current) return;
 
         map.current.setFog({
-          color: "rgb(10, 15, 20)",
-          "high-color": "rgb(20, 30, 45)",
-          "horizon-blend": 0.1,
-          "space-color": "rgb(5, 8, 12)",
-          "star-intensity": 0.15,
+          color: "rgb(240, 245, 250)",
+          "high-color": "rgb(200, 210, 220)",
+          "horizon-blend": 0.05,
+          "space-color": "rgb(230, 235, 240)",
+          "star-intensity": 0,
         });
 
         setIsLoaded(true);
@@ -132,7 +132,7 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
       const rotateGlobe = () => {
         if (!map.current) return;
         const center = map.current.getCenter();
-        center.lng += 0.02;
+        center.lng += 0.015;
         map.current.setCenter(center);
         rotationAnimation = requestAnimationFrame(rotateGlobe);
       };
@@ -210,15 +210,15 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
             "interpolate",
             ["linear"],
             ["zoom"],
-            1, 8,
-            3, 15,
-            6, 25,
+            1, 10,
+            3, 18,
+            6, 30,
           ],
           "circle-color": ["get", "color"],
-          "circle-opacity": 0.75,
-          "circle-blur": 0.3,
-          "circle-stroke-width": 1,
-          "circle-stroke-color": "rgba(255, 255, 255, 0.3)",
+          "circle-opacity": 0.85,
+          "circle-blur": 0.2,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#ffffff",
         },
       });
 
@@ -285,10 +285,10 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
           type: "line",
           source: "value-lines",
           paint: {
-            "line-color": "#22c55e",
+            "line-color": "#2563EB",
             "line-width": 2,
-            "line-opacity": 0.7,
-            "line-dasharray": [2, 2],
+            "line-opacity": 0.6,
+            "line-dasharray": [3, 2],
           },
         });
       }
@@ -307,13 +307,12 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
     el.className = "user-marker";
     el.innerHTML = `
       <div style="
-        width: 20px;
-        height: 20px;
-        background: #22c55e;
+        width: 16px;
+        height: 16px;
+        background: #2563EB;
         border-radius: 50%;
         border: 3px solid white;
-        box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
-        animation: pulse 2s infinite;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
       "></div>
     `;
 
@@ -327,7 +326,7 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
       <div className="flex-1 flex items-center justify-center bg-background" data-testid="globe-container">
         <div className="text-center p-8">
           <AlertTriangle className="w-10 h-10 text-destructive mx-auto mb-4" />
-          <p className="text-muted-foreground font-mono">
+          <p className="text-muted-foreground">
             Mapbox token not configured
           </p>
         </div>
@@ -346,8 +345,8 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
       {!isLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80">
           <div className="text-center">
-            <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="font-mono text-sm text-muted-foreground">
+            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-sm text-muted-foreground">
               Loading Globe...
             </p>
           </div>

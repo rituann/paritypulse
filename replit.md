@@ -1,8 +1,22 @@
-# Parity Pulse Dashboard
+# ParityPulse - Global Economic Resilience & Labor Parity Engine
 
 ## Overview
 
-Parity Pulse is a global purchasing power parity (PPP) intelligence dashboard that visualizes how much a user's lifestyle costs across different countries. The application features an interactive 3D globe visualization powered by Mapbox, allowing users to compare cost of living adjusted for purchasing power. Users can build a custom "basket" of items and see the Parity Pulse Index for countries worldwide, with AI-powered analysis capabilities.
+ParityPulse is an executive dashboard for analyzing global purchasing power parity (PPP). The application visualizes how much a user's lifestyle costs across 50+ countries using an interactive 3D Mapbox globe with a Modern Minimalist Executive aesthetic (white theme inspired by McKinsey/The Economist).
+
+## Recent Updates (January 2026)
+
+### Design Overhaul
+- **Executive White Theme**: Complete redesign from dark FinTech to boardroom-ready white aesthetic
+- **Typography**: Georgia (serif) for headlines, Inter (sans-serif) for UI text
+- **Color Palette**: Navy (#0F172A), Slate (#475569), Success Blue (#2563EB)
+- **Watermark**: "CONCEPT BY RITU ANN ROY" fixed in bottom-right corner
+
+### New Features
+- **Tariff Sensitivity Slider**: 0-50% import cost simulation for trade policy analysis
+- **Work-Hour Exchange**: Calculate hours of local work to afford basket
+- **Macro-Stability Score**: Stable/Moderate/Volatile indicator per country
+- **Consultant's Brief**: GPT-4o powered executive summary with Economic Opportunity, Labor Risks, Policy Implications
 
 ## User Preferences
 
@@ -14,7 +28,7 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: React with TypeScript, using Vite as the build tool
 - **Routing**: Wouter for lightweight client-side routing
 - **State Management**: TanStack React Query for server state and data fetching
-- **Styling**: Tailwind CSS with a dark FinTech theme inspired by Bloomberg Terminal
+- **Styling**: Tailwind CSS with Executive White theme (McKinsey/Economist aesthetic)
 - **UI Components**: shadcn/ui component library (Radix UI primitives + Tailwind)
 - **Map Visualization**: Mapbox GL for 3D globe rendering with custom heat map overlays
 

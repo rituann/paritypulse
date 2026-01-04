@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [selectedCountry, setSelectedCountry] = useState<ShadowPriceResult | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [customTicker, setCustomTicker] = useState<TickerItem[] | null>(null);
+  const [tariffSensitivity, setTariffSensitivity] = useState(0);
 
   const tickerQuery = useQuery<TickerItem[]>({
     queryKey: ["/api/ticker"],
@@ -35,6 +36,8 @@ export default function Dashboard() {
         onTickerChange={setCustomTicker}
         userLocation={userLocation}
         onLocationChange={setUserLocation}
+        tariffSensitivity={tariffSensitivity}
+        onTariffChange={setTariffSensitivity}
       />
 
       <main className="flex-1 relative">
@@ -57,16 +60,16 @@ export default function Dashboard() {
 
         {!results && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center max-w-md p-8 glass rounded-lg pointer-events-auto">
-              <h2 className="font-mono text-xl font-bold mb-4">
-                Welcome to Parity Pulse
+            <div className="text-center max-w-lg p-10 bg-card border border-border rounded shadow-sm pointer-events-auto">
+              <h2 className="font-serif text-2xl font-bold mb-4">
+                Welcome to ParityPulse
               </h2>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                Enter 1-5 items in your lifestyle basket to see where your money
-                goes further around the world. We'll calculate the purchasing
-                power parity adjusted cost for every major country.
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                Enter 1-5 items in your lifestyle basket to analyze global economic
+                parity. We'll calculate the purchasing power adjusted cost across
+                50+ countries, helping you understand where your money goes further.
               </p>
-              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground font-mono">
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <span>Start by detecting your location</span>
               </div>
@@ -80,6 +83,10 @@ export default function Dashboard() {
       ) : tickerItems.length > 0 ? (
         <LiveTicker items={tickerItems} />
       ) : null}
+
+      <div className="watermark" data-testid="watermark">
+        Concept by Ritu Ann Roy
+      </div>
     </div>
   );
 }
