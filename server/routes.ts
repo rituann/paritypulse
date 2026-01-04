@@ -45,6 +45,7 @@ const COUNTRY_DATA = [
   { code: "NGA", name: "Nigeria", lat: 9.082, lng: 8.6753, ppp: 0.28, professionalWage: 30000, minimumWage: 1800 },
   { code: "ISR", name: "Israel", lat: 31.0461, lng: 34.8516, ppp: 0.82, professionalWage: 110000, minimumWage: 22000 },
   { code: "UAE", name: "UAE", lat: 23.4241, lng: 53.8478, ppp: 0.72, professionalWage: 100000, minimumWage: 9600 },
+  { code: "BHR", name: "Bahrain", lat: 26.2285, lng: 50.5860, ppp: 0.65, professionalWage: 75000, minimumWage: 9000 },
   { code: "SAU", name: "Saudi Arabia", lat: 23.8859, lng: 45.0792, ppp: 0.54, professionalWage: 80000, minimumWage: 12000 },
   { code: "NZL", name: "New Zealand", lat: -40.9006, lng: 174.886, ppp: 0.91, professionalWage: 95000, minimumWage: 36000 },
   { code: "IRL", name: "Ireland", lat: 53.1424, lng: -7.6921, ppp: 0.84, professionalWage: 100000, minimumWage: 26000 },

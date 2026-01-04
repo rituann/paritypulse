@@ -269,20 +269,20 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
                     ${props.countryName}
                   </div>
                   <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
                       <span style="font-size: 11px; color: #64748B;">Parity Index</span>
                       <span style="font-size: 12px; font-weight: 600; color: ${indexColor};">
                         ${props.shadowPriceIndex.toFixed(2)}x
                       </span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
                       <span style="font-size: 11px; color: #64748B;">Adjusted Cost</span>
                       <span style="font-size: 12px; font-weight: 500; color: #0F172A;">
                         $${props.adjustedCost?.toFixed(2) || "N/A"}
                       </span>
                     </div>
                     ${props.workHours ? `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
                       <span style="font-size: 11px; color: #64748B;">Work Hours</span>
                       <span style="font-size: 12px; font-weight: 500; color: #0F172A;">
                         ${props.workHours}h
@@ -290,7 +290,7 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
                     </div>
                     ` : ''}
                   </div>
-                  <div style="font-size: 10px; color: #64748B; margin-top: 4px; border-top: 1px solid #E2E8F0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="font-size: 10px; color: #64748B; margin-top: 4px; border-top: 1px solid #E2E8F0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
                     <span style="display: flex; align-items: center; gap: 4px;">
                       <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${indexColor};"></span>
                       ${indexLabel}
