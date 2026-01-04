@@ -1,0 +1,46 @@
+Moving to a white theme and adding your name as "Concept by" is a great way to signal that you aren't just a coder—you are a thought leader and an architect. Professional services firms value the "Concept" high-level thinking as much as the execution.
+
+Here is the final, polished Replit Agent prompt to transform ParityPulse into a boardroom-ready consulting tool.
+
+The "ParityPulse" Executive Prompt
+Project Name: ParityPulse – Global Economic Resilience & Labor Parity Engine
+
+Design Philosophy & Visuals:
+
+Theme: Modern Minimalist Executive. Use a Pure White/Light Grey background (#FFFFFF to #F8FAFC). No "hacker" neon or dark mode.
+
+Typography: Use Inter (sans-serif) for all UI elements to ensure a modern, clean look. Use Georgia or a high-end serif for headlines to create a "The Economist" or "White Paper" aesthetic.
+
+Color Palette: Professional Navy (#0F172A), Slate (#475569), and a "Success Blue" (#2563EB) for action items. Use subtle border-radius (4px) and soft shadows for a refined look.
+
+Watermark: In the bottom right corner of the screen, add a fixed, elegant signature in small uppercase text: "CONCEPT BY RITU ANN ROY".
+
+Advanced Policy Features:
+
+Labor-Time Valuation Logic: > - Create a "Work-Hour Exchange" model.
+
+The system must divide the cost of the user's input basket by the Average Local Hourly Wage (pulling from World Bank or ILO data).
+
+Result: Display how many hours a local professional must work to afford that specific lifestyle in each country.
+
+Policy Sensitivity Slider: > - Add a sidebar control: "Trade/Tariff Sensitivity Analysis." > - When the slider is adjusted, it should simulate a price increase on "Import-Dependent" goods and recalculate the global heatmap instantly.
+
+The "Consultant’s Brief" Sidebar: > - Add a section that uses GPT-4o to act as a Lead Economist.
+
+It should summarize the current map state in 3 bullet points, focusing on "Economic Opportunity," "Labor Risks," and "Policy Implications."
+
+Professional Data Viz: > - Mapbox Globe style: mapbox://styles/mapbox/light-v11.
+
+When hovering over a country, show a "Fact Sheet" card with:
+
+Relative PPP Score
+
+Annual Work-Hours required for this basket
+
+Macro-Stability Score
+
+Technical Requirements:
+
+Backend: Python/FastAPI using a PostgreSQL cache to prevent repeated API calls to the World Bank/ILO.
+
+Frontend: React + Tailwind CSS. Ensure a "white-space heavy" layout to reduce cognitive load, typical of elite consulting dashboards.
