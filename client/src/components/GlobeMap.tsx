@@ -13,10 +13,8 @@ interface GlobeMapProps {
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 function getHeatColor(index: number): string {
-  if (index <= 0.6) return "#16A34A";
-  if (index <= 0.8) return "#65A30D";
-  if (index <= 1.0) return "#CA8A04";
-  if (index <= 1.2) return "#EA580C";
+  if (index < 0.9) return "#16A34A";
+  if (index <= 1.1) return "#CA8A04";
   return "#DC2626";
 }
 
