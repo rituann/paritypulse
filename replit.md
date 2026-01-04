@@ -1,8 +1,8 @@
-# Shadow Price Dashboard
+# Parity Pulse Dashboard
 
 ## Overview
 
-Shadow Price is a global purchasing power parity (PPP) intelligence dashboard that visualizes how much a user's lifestyle costs across different countries. The application features an interactive 3D globe visualization powered by Mapbox, allowing users to compare cost of living adjusted for purchasing power. Users can build a custom "basket" of items and see the Shadow Price Index for countries worldwide, with AI-powered analysis capabilities.
+Parity Pulse is a global purchasing power parity (PPP) intelligence dashboard that visualizes how much a user's lifestyle costs across different countries. The application features an interactive 3D globe visualization powered by Mapbox, allowing users to compare cost of living adjusted for purchasing power. Users can build a custom "basket" of items and see the Parity Pulse Index for countries worldwide, with AI-powered analysis capabilities.
 
 ## User Preferences
 
@@ -70,6 +70,7 @@ shared/           # Shared types and database schema
 ## Recent Changes
 
 ### January 4, 2026
+- **Rebranding**: Renamed "Shadow Price" to "Parity Pulse" throughout the application (UI, documentation, meta tags)
 - **WebGL Fallback**: Added graceful fallback UI when WebGL is unavailable (common in headless testing environments). The fallback shows a scrollable list of countries that can be clicked to view details.
 - **Bug Fix**: Fixed API response parsing in BasketSidebar - the `apiRequest` function returns a Response object, which now correctly calls `.json()` to parse the response body.
 - **Ticker Update**: The calculation results now include custom ticker data that updates the live ticker bar when a calculation completes.

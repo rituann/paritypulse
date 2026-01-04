@@ -65,7 +65,7 @@ export function BasketSidebar({
       }
       toast({
         title: "Analysis Complete",
-        description: `Calculated Shadow Price Index for ${data.results.length} countries`,
+        description: `Calculated Parity Pulse Index for ${data.results.length} countries`,
       });
     },
     onError: (error: Error) => {
@@ -146,7 +146,7 @@ export function BasketSidebar({
               className="font-mono text-lg font-bold tracking-tight"
               data-testid="text-title"
             >
-              SHADOW PRICE
+              PARITY PULSE
             </h1>
             <p className="text-xs text-muted-foreground font-mono tracking-widest">
               PPP INTELLIGENCE

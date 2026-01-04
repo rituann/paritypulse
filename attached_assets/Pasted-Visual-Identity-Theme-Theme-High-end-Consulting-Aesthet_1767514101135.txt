@@ -1,0 +1,29 @@
+Visual Identity & Theme:
+
+Theme: High-end Consulting Aesthetic. Use a Clean White Theme (Background: #FFFFFF or #F9FAFB).
+
+Typography: Use professional, high-legibility sans-serif fonts. Use Inter for body text and Playfair Display or Roboto Mono for headers and data points to give it a "Financial Times" or "The Economist" feel.
+
+Color Palette: Professional Slate (#1E293B), Crisp White, and accents of "Policy Blue" (#2563EB). Use soft shadows and subtle borders instead of dark glows.
+
+Watermark: Add a sophisticated, low-opacity footer that reads: "Engineered by Ritu Ann Roy | ParityPulse Framework v1.0".
+
+Core New Features:
+
+Labour-Time Exchange Metric: Replace simple currency costs with a "Work-Hour Index." Fetch average hourly wage data (via World Bank/ILO API or static high-quality dataset) and calculate how many hours a citizen in the selected country must work to afford the user's input basket.
+
+Macro-Policy Simulation Slider: Add a sidebar slider labeled "Global Tariff Adjustment." When toggled, it should mathematically simulate the impact of trade barriers on the "Parity Score" across the map.
+
+Interactive Mapbox Globe: Use a Light-themed Mapbox style (mapbox://styles/mapbox/light-v11). When a user hovers over a country, display a clean "Executive Summary" tooltip showing the Work-Hour Index and a "Resilience Rating."
+
+AI Strategic Briefing: Add a section at the bottom titled "Advisory Insights." Use an LLM to generate a 3-point strategic summary of the current map data, focusing on "Socioeconomic Risks" and "Market Opportunities."
+
+Technical Workflow:
+
+Input: Simple user list (e.g., "Monthly Rent, 50L Gasoline, 10kg Coffee").
+
+Processing: Calculate the ParityPulse Index: (Local Basket Cost / Local Wage) / (Home Basket Cost / Home Wage).
+
+Backend: Python/FastAPI for economic calculations; Replit PostgreSQL for caching wage data.
+
+Frontend: React with Tailwind CSS. Ensure all components use a "Minimalist Professional" design—no "hacker" neon or dark backgrounds.

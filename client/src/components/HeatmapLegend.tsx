@@ -13,7 +13,7 @@ export function HeatmapLegend() {
     >
       <div className="flex items-center gap-2 mb-3">
         <h3 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-          Shadow Price Index
+          Parity Pulse Index
         </h3>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -21,7 +21,7 @@ export function HeatmapLegend() {
           </TooltipTrigger>
           <TooltipContent side="left" className="max-w-xs">
             <p className="text-xs">
-              The Shadow Price Index compares how much your lifestyle basket
+              The Parity Pulse Index compares how much your lifestyle basket
               costs in each country relative to your location, adjusted for
               purchasing power.
             </p>

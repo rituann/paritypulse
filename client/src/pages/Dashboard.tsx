@@ -59,7 +59,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center max-w-md p-8 glass rounded-lg pointer-events-auto">
               <h2 className="font-mono text-xl font-bold mb-4">
-                Welcome to Shadow Price
+                Welcome to Parity Pulse
               </h2>
               <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                 Enter 1-5 items in your lifestyle basket to see where your money

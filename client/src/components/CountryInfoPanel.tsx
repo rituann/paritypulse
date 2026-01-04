@@ -47,7 +47,7 @@ export function CountryInfoPanel({ country, onClose }: CountryInfoPanelProps) {
       <div className="flex-1 overflow-auto p-6 space-y-6">
         <div className="text-center p-6 rounded-md bg-muted/20 border border-white/5">
           <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-2">
-            Shadow Price Index
+            Parity Pulse Index
           </p>
           <p
             className={`text-5xl font-mono font-bold tabular-nums ${
@@ -57,7 +57,7 @@ export function CountryInfoPanel({ country, onClose }: CountryInfoPanelProps) {
                 ? "text-neon-red"
                 : ""
             }`}
-            data-testid="text-shadow-index"
+            data-testid="text-parity-index"
           >
             {country.shadowPriceIndex.toFixed(2)}x
           </p>

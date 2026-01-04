@@ -1,4 +1,4 @@
-# Design Guidelines: The Shadow Price Dashboard
+# Design Guidelines: The Parity Pulse Dashboard
 
 ## Design Approach
 
@@ -77,7 +77,7 @@
 
 ### Country Info Panel (popup on click)
 - Modal/Drawer hybrid: Slides in from right on desktop, bottom sheet on mobile
-- Header: Country flag + name + "Shadow Price Index" score (large, prominent)
+- Header: Country flag + name + "Parity Pulse Index" score (large, prominent)
 - Sections: Cost breakdown table, PPP comparison chart, "Value Lines" explanation
 - Close button: Top-right with subtle hover state
 

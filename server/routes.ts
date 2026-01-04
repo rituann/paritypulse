@@ -241,7 +241,7 @@ export async function registerRoutes(
       res.json({ results, ticker, mappedCommodities });
     } catch (error) {
       console.error("Calculation error:", error);
-      res.status(500).json({ error: "Failed to calculate shadow price index" });
+      res.status(500).json({ error: "Failed to calculate parity pulse index" });
     }
   });
 
