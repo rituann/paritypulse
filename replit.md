@@ -83,7 +83,14 @@ shared/           # Shared types and database schema
 
 ## Recent Changes
 
-### January 4, 2026
+### January 4, 2026 (Latest)
+- **Category-Based Weighted Basket**: Items are now categorized (housing, transport, staples, utilities, healthcare, luxury, other) and weighted using fixed economic weights (housing=40%, transport=15%, etc.)
+- **Parity Index Formula**: New formula compares wage-adjusted affordability: (Weighted Basket Cost / Local Wage) in target vs home country
+- **Improved Hover Tooltip**: Country fact sheet popup has better vertical spacing with flex layout, displays Parity Index, Adjusted Cost, Work Hours, and Stability
+- **Info Label**: Added "Calculated using a Weighted Consumer Basket model" label with info icon under Calculate button
+- **GPT-4o Categorization**: AI categorizes user items into economic buckets for proper weight assignment
+
+### January 4, 2026 (Earlier)
 - **Rebranding**: Renamed "Shadow Price" to "Parity Pulse" throughout the application (UI, documentation, meta tags)
 - **WebGL Fallback**: Added graceful fallback UI when WebGL is unavailable (common in headless testing environments). The fallback shows a scrollable list of countries that can be clicked to view details.
 - **Bug Fix**: Fixed API response parsing in BasketSidebar - the `apiRequest` function returns a Response object, which now correctly calls `.json()` to parse the response body.
