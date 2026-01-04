@@ -66,47 +66,53 @@ const COUNTRY_DATA = [
 type WageType = "professional" | "minimum";
 
 const COMMODITY_PRICES: Record<string, { name: string; category: string; price: number }> = {
-  gasoline: { name: "Gasoline (gallon)", category: "fuel", price: 3.85 },
-  eggs: { name: "Eggs (dozen)", category: "food", price: 4.25 },
+  gasoline: { name: "Gasoline (gallon)", category: "transport", price: 3.85 },
+  eggs: { name: "Eggs (dozen)", category: "staples", price: 4.25 },
   rent: { name: "Rent (1br apt)", category: "housing", price: 1500 },
-  netflix: { name: "Netflix Sub", category: "entertainment", price: 15.49 },
-  milk: { name: "Milk (gallon)", category: "food", price: 4.15 },
-  bread: { name: "Bread (loaf)", category: "food", price: 2.85 },
-  coffee: { name: "Coffee (lb)", category: "food", price: 8.50 },
+  netflix: { name: "Netflix Sub", category: "luxury", price: 15.49 },
+  milk: { name: "Milk (gallon)", category: "staples", price: 4.15 },
+  bread: { name: "Bread (loaf)", category: "staples", price: 2.85 },
+  coffee: { name: "Coffee (lb)", category: "staples", price: 8.50 },
   electricity: { name: "Electricity (kWh)", category: "utilities", price: 0.16 },
   internet: { name: "Internet (monthly)", category: "utilities", price: 65 },
-  beer: { name: "Beer (6-pack)", category: "food", price: 9.50 },
-  rice: { name: "Rice (5lb)", category: "food", price: 5.25 },
-  chicken: { name: "Chicken (lb)", category: "food", price: 4.75 },
-  gym: { name: "Gym Membership", category: "fitness", price: 45 },
+  beer: { name: "Beer (6-pack)", category: "luxury", price: 9.50 },
+  rice: { name: "Rice (5lb)", category: "staples", price: 5.25 },
+  chicken: { name: "Chicken (lb)", category: "staples", price: 4.75 },
+  gym: { name: "Gym Membership", category: "luxury", price: 45 },
   transit: { name: "Monthly Transit", category: "transport", price: 100 },
-  dining: { name: "Dining Out (meal)", category: "food", price: 18 },
-  spotify: { name: "Spotify Sub", category: "entertainment", price: 10.99 },
+  dining: { name: "Dining Out (meal)", category: "luxury", price: 18 },
+  spotify: { name: "Spotify Sub", category: "luxury", price: 10.99 },
   phone: { name: "Phone Plan", category: "utilities", price: 75 },
   insurance: { name: "Health Insurance", category: "healthcare", price: 450 },
 };
 
+const CATEGORY_WEIGHTS: Record<string, number> = {
+  housing: 0.40,
+  transport: 0.15,
+  staples: 0.10,
+  utilities: 0.10,
+  healthcare: 0.10,
+  luxury: 0.05,
+  other: 0.10,
+};
+
 async function mapItemsToCommodities(items: string[]): Promise<MappedCommodity[]> {
-  const prompt = `You are a commodities and consumer price analyst. Map the following user inputs to standardized commodity or consumer price categories.
+  const categoryList = Object.keys(CATEGORY_WEIGHTS).join(", ");
+  const prompt = `You are a commodities and consumer price analyst. Map the following user inputs to standardized commodity categories and economic buckets.
 
 User inputs: ${JSON.stringify(items)}
 
 Available commodity symbols: ${Object.keys(COMMODITY_PRICES).join(", ")}
 
+Economic categories (use these exact names): ${categoryList}
+
 For each user input:
-1. Return the best matching commodity symbol
-2. Assign a realistic monthly expenditure weight (0.0-1.0) based on typical household budgets
-   - Housing (rent, mortgage): 0.30-0.40
-   - Transportation (car, gas, transit): 0.15-0.20
-   - Food (groceries, dining): 0.10-0.15
-   - Utilities (electric, internet, phone): 0.05-0.10
-   - Entertainment (streaming, gym): 0.02-0.05
-   - Other essentials: 0.05-0.10
+1. Return the best matching commodity symbol from the available list
+2. Categorize into one of these economic buckets: housing, transport, staples, utilities, healthcare, luxury, other
+3. Estimate the base USD price for this item
 
-The weights should sum to approximately 1.0 across all items.
-
-Respond with JSON array in format:
-[{"userInput": "original input", "symbol": "commodity_symbol", "category": "category_name", "basePrice": estimated_usd_price, "weight": expenditure_weight}]`;
+Respond with JSON in format:
+{"items": [{"userInput": "original input", "symbol": "commodity_symbol", "category": "housing|transport|staples|utilities|healthcare|luxury|other", "basePrice": estimated_usd_price}]}`;
 
   try {
     const response = await openai.chat.completions.create({
@@ -122,47 +128,49 @@ Respond with JSON array in format:
     const mappedItems = parsed.items || parsed.mappings || parsed;
     
     if (Array.isArray(mappedItems)) {
-      const totalWeight = mappedItems.reduce((sum: number, item: any) => sum + (item.weight || 0), 0);
-      const normalizer = totalWeight > 0 ? 1 / totalWeight : 1 / mappedItems.length;
-      return mappedItems.map((item: any) => ({
-        userInput: item.userInput || item.user_input || "",
-        symbol: item.symbol || "gasoline",
-        category: item.category || "general",
-        basePrice: item.basePrice || item.base_price || COMMODITY_PRICES[item.symbol]?.price || 10,
-        weight: (item.weight || (1 / mappedItems.length)) * normalizer,
-      }));
+      return mappedItems.map((item: any) => {
+        const category = item.category?.toLowerCase() || "other";
+        const categoryWeight = CATEGORY_WEIGHTS[category] || CATEGORY_WEIGHTS.other;
+        return {
+          userInput: item.userInput || item.user_input || "",
+          symbol: item.symbol || "gasoline",
+          category: category,
+          basePrice: item.basePrice || item.base_price || COMMODITY_PRICES[item.symbol]?.price || 10,
+          weight: categoryWeight,
+        };
+      });
     }
     
-    const defaultWeight = 1 / items.length;
     return items.map((item) => {
       const key = item.toLowerCase().replace(/\s+/g, "");
       const matchedKey = Object.keys(COMMODITY_PRICES).find((k) => 
         k.includes(key) || key.includes(k)
       );
       const commodity = matchedKey ? COMMODITY_PRICES[matchedKey] : COMMODITY_PRICES.gasoline;
+      const categoryWeight = CATEGORY_WEIGHTS[commodity.category] || CATEGORY_WEIGHTS.other;
       return {
         userInput: item,
         symbol: matchedKey || "gasoline",
         category: commodity.category,
         basePrice: commodity.price,
-        weight: defaultWeight,
+        weight: categoryWeight,
       };
     });
   } catch (error) {
     console.error("AI mapping error:", error);
-    const defaultWeight = 1 / items.length;
     return items.map((item) => {
       const key = item.toLowerCase().replace(/\s+/g, "");
       const matchedKey = Object.keys(COMMODITY_PRICES).find((k) => 
         k.includes(key) || key.includes(k)
       );
       const commodity = matchedKey ? COMMODITY_PRICES[matchedKey] : COMMODITY_PRICES.gasoline;
+      const categoryWeight = CATEGORY_WEIGHTS[commodity.category] || CATEGORY_WEIGHTS.other;
       return {
         userInput: item,
         symbol: matchedKey || "gasoline",
         category: commodity.category,
         basePrice: commodity.price,
-        weight: defaultWeight,
+        weight: categoryWeight,
       };
     });
   }
@@ -188,13 +196,23 @@ function calculateShadowPriceIndex(
       }, COUNTRY_DATA[0])
     : COUNTRY_DATA[0];
 
-  const totalWeight = mappedCommodities.reduce((sum, c) => sum + c.weight, 0);
-  const normalizedCommodities = mappedCommodities.map(c => ({
-    ...c,
-    weight: totalWeight > 0 ? c.weight / totalWeight : 1 / mappedCommodities.length
-  }));
+  const categoryGroups: Record<string, MappedCommodity[]> = {};
+  for (const c of mappedCommodities) {
+    const cat = c.category || "other";
+    if (!categoryGroups[cat]) categoryGroups[cat] = [];
+    categoryGroups[cat].push(c);
+  }
   
-  const userBasketCost = normalizedCommodities.reduce((sum, c) => sum + c.basePrice, 0);
+  let userBasketCost = 0;
+  for (const [category, items] of Object.entries(categoryGroups)) {
+    const categoryWeight = CATEGORY_WEIGHTS[category] || CATEGORY_WEIGHTS.other;
+    const categoryTotalPrice = items.reduce((sum, c) => sum + c.basePrice, 0);
+    userBasketCost += categoryTotalPrice * categoryWeight;
+  }
+  
+  const homeWage = wageType === "professional" ? userCountry.professionalWage : userCountry.minimumWage;
+  const homeHourlyWage = homeWage / 2080;
+  const homeAffordability = userBasketCost / homeHourlyWage;
 
   const results: ShadowPriceResult[] = COUNTRY_DATA.map((country) => {
     const pppRatio = country.ppp / userCountry.ppp;
@@ -204,16 +222,19 @@ function calculateShadowPriceIndex(
     const tariffMultiplier = 1 + tariffImpact;
     
     const adjustedCost = userBasketCost * pppRatio * tariffMultiplier;
-    const normalizedIndex = pppRatio * tariffMultiplier;
     
-    const annualWage = wageType === "professional" ? country.professionalWage : country.minimumWage;
-    const hourlyWage = annualWage / 2080;
-    const workHours = Math.min(adjustedCost / hourlyWage, 999);
+    const targetWage = wageType === "professional" ? country.professionalWage : country.minimumWage;
+    const targetHourlyWage = targetWage / 2080;
+    const targetAffordability = adjustedCost / targetHourlyWage;
+    
+    const parityIndex = targetAffordability / homeAffordability;
+    
+    const workHours = Math.min(targetAffordability, 999);
     
     let macroStability: "Stable" | "Moderate" | "Volatile";
-    if (normalizedIndex >= 0.8 && normalizedIndex <= 1.2 && country.ppp >= 0.5) {
+    if (parityIndex >= 0.8 && parityIndex <= 1.2 && country.ppp >= 0.5) {
       macroStability = "Stable";
-    } else if (normalizedIndex < 0.5 || country.ppp < 0.3) {
+    } else if (parityIndex > 2.0 || country.ppp < 0.3) {
       macroStability = "Volatile";
     } else {
       macroStability = "Moderate";
@@ -222,14 +243,14 @@ function calculateShadowPriceIndex(
     return {
       countryCode: country.code,
       countryName: country.name,
-      shadowPriceIndex: Math.max(0.3, Math.min(2.0, normalizedIndex)),
+      shadowPriceIndex: Math.max(0.3, Math.min(3.0, parityIndex)),
       basketCost: userBasketCost,
       adjustedCost: adjustedCost,
       latitude: country.lat,
       longitude: country.lng,
-      isValueDeal: normalizedIndex < 0.7,
+      isValueDeal: parityIndex < 0.8,
       workHours: Math.round(workHours * 10) / 10,
-      annualWage: annualWage,
+      annualWage: targetWage,
       macroStability,
     };
   });

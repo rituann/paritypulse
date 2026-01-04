@@ -23,6 +23,7 @@ import {
   Briefcase,
   FlaskConical,
   Users,
+  Info,
 } from "lucide-react";
 import type { ShadowPriceResult, TickerItem, WageType } from "@shared/schema";
 
@@ -367,6 +368,10 @@ export function BasketSidebar({
             </>
           )}
         </Button>
+        <p className="text-xs text-muted-foreground mt-3 flex items-center justify-center gap-1.5">
+          <Info className="w-3 h-3" />
+          Calculated using a Weighted Consumer Basket model
+        </p>
       </div>
     </aside>
   );
