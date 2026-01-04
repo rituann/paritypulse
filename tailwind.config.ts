@@ -85,6 +85,7 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
+        logo: ["var(--font-logo)"],
         mono: ["var(--font-mono)"],
       },
       keyframes: {

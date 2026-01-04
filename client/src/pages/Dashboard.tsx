@@ -6,7 +6,7 @@ import { HeatmapLegend } from "@/components/HeatmapLegend";
 import { CountryInfoPanel } from "@/components/CountryInfoPanel";
 import { LiveTicker, TickerSkeleton } from "@/components/LiveTicker";
 import { LocationIndicator } from "@/components/LocationIndicator";
-import type { ShadowPriceResult, TickerItem } from "@shared/schema";
+import type { ShadowPriceResult, TickerItem, WageType } from "@shared/schema";
 
 export default function Dashboard() {
   const [results, setResults] = useState<ShadowPriceResult[] | null>(null);
@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [customTicker, setCustomTicker] = useState<TickerItem[] | null>(null);
   const [tariffSensitivity, setTariffSensitivity] = useState(0);
+  const [wageType, setWageType] = useState<WageType>("professional");
 
   const tickerQuery = useQuery<TickerItem[]>({
     queryKey: ["/api/ticker"],
@@ -38,6 +39,8 @@ export default function Dashboard() {
         onLocationChange={setUserLocation}
         tariffSensitivity={tariffSensitivity}
         onTariffChange={setTariffSensitivity}
+        wageType={wageType}
+        onWageTypeChange={setWageType}
       />
 
       <main className="flex-1 relative">

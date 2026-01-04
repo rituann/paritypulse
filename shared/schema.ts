@@ -76,7 +76,10 @@ export interface MappedCommodity {
   symbol: string;
   category: string;
   basePrice: number;
+  weight: number;
 }
+
+export type WageType = "professional" | "minimum";
 
 export interface ShadowPriceResult {
   countryCode: string;

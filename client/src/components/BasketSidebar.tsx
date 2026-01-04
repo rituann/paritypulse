@@ -18,12 +18,13 @@ import {
   Calculator,
   Plus,
   X,
-  TrendingUp,
   Globe2,
   MapPin,
   Briefcase,
+  FlaskConical,
+  Users,
 } from "lucide-react";
-import type { ShadowPriceResult, TickerItem } from "@shared/schema";
+import type { ShadowPriceResult, TickerItem, WageType } from "@shared/schema";
 
 const basketSchema = z.object({
   item: z.string().min(1, "Enter an item"),
@@ -36,6 +37,8 @@ interface BasketSidebarProps {
   onLocationChange: (location: { lat: number; lng: number } | null) => void;
   tariffSensitivity: number;
   onTariffChange: (value: number) => void;
+  wageType: WageType;
+  onWageTypeChange: (value: WageType) => void;
 }
 
 export function BasketSidebar({
@@ -45,6 +48,8 @@ export function BasketSidebar({
   onLocationChange,
   tariffSensitivity,
   onTariffChange,
+  wageType,
+  onWageTypeChange,
 }: BasketSidebarProps) {
   const [items, setItems] = useState<string[]>([]);
   const { toast } = useToast();
@@ -55,7 +60,7 @@ export function BasketSidebar({
   });
 
   const calculateMutation = useMutation({
-    mutationFn: async (data: { items: string[]; location: { lat: number; lng: number } | null; tariffSensitivity: number }) => {
+    mutationFn: async (data: { items: string[]; location: { lat: number; lng: number } | null; tariffSensitivity: number; wageType: WageType }) => {
       const response = await apiRequest("POST", "/api/calculate-shadow-price", data);
       const json = await response.json();
       return json as { results: ShadowPriceResult[]; ticker: any[] };
@@ -107,7 +112,7 @@ export function BasketSidebar({
       });
       return;
     }
-    calculateMutation.mutate({ items, location: userLocation, tariffSensitivity });
+    calculateMutation.mutate({ items, location: userLocation, tariffSensitivity, wageType });
   };
 
   const detectLocation = () => {
@@ -145,7 +150,7 @@ export function BasketSidebar({
           </div>
           <div>
             <h1
-              className="font-serif text-xl font-bold tracking-tight text-foreground"
+              className="font-logo text-xl font-bold tracking-tight text-foreground"
               data-testid="text-title"
             >
               ParityPulse
@@ -194,7 +199,7 @@ export function BasketSidebar({
                   <FormItem className="flex-1">
                     <FormControl>
                       <Input
-                        placeholder="e.g. Gasoline, Eggs, Rent..."
+                        placeholder="e.g. Rent, Eggs, Netflix..."
                         className="text-sm"
                         data-testid="input-basket-item"
                         {...field}
@@ -259,29 +264,64 @@ export function BasketSidebar({
           </div>
         </div>
 
-        <div>
+        <div className="p-4 rounded bg-card border border-border">
           <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-            <TrendingUp className="w-3.5 h-3.5" />
-            Trade/Tariff Sensitivity
+            <FlaskConical className="w-3.5 h-3.5" />
+            The Policy Lab
           </h2>
-          <div className="space-y-3">
-            <input
-              type="range"
-              min="0"
-              max="50"
-              value={tariffSensitivity}
-              onChange={(e) => onTariffChange(parseInt(e.target.value))}
-              className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
-              data-testid="slider-tariff"
-            />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Baseline</span>
-              <span className="font-medium text-foreground">+{tariffSensitivity}% Import Costs</span>
-              <span>+50%</span>
+          
+          <div className="space-y-5">
+            <div>
+              <label className="text-xs font-medium text-foreground mb-2 block">
+                Tariff Sensitivity
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={tariffSensitivity}
+                onChange={(e) => onTariffChange(parseInt(e.target.value))}
+                className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
+                data-testid="slider-tariff"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>Baseline</span>
+                <span className="font-medium text-foreground">+{tariffSensitivity}%</span>
+                <span>+50%</span>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Simulates price increases on import-dependent goods to model trade policy impacts.
-            </p>
+
+            <div>
+              <label className="text-xs font-medium text-foreground mb-2 flex items-center gap-2">
+                <Users className="w-3.5 h-3.5" />
+                Global Wage Toggle
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant={wageType === "professional" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => onWageTypeChange("professional")}
+                  className="text-xs"
+                  data-testid="button-wage-professional"
+                >
+                  Professional
+                </Button>
+                <Button
+                  variant={wageType === "minimum" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => onWageTypeChange("minimum")}
+                  className="text-xs"
+                  data-testid="button-wage-minimum"
+                >
+                  Minimum Wage
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                {wageType === "professional" 
+                  ? "Senior Tech professional salaries" 
+                  : "Local minimum wage workers"}
+              </p>
+            </div>
           </div>
         </div>
 

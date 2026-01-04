@@ -191,6 +191,8 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
             latitude: result.latitude,
             longitude: result.longitude,
             isValueDeal: result.isValueDeal,
+            workHours: result.workHours,
+            macroStability: result.macroStability,
             color: getHeatColor(result.shadowPriceIndex),
           },
         })),
@@ -240,15 +242,76 @@ export function GlobeMap({ results, userLocation, onCountrySelect }: GlobeMapPro
         }
       });
 
-      map.current.on("mouseenter", "country-heat-layer", () => {
+      const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        className: "country-fact-sheet-popup",
+        maxWidth: "280px",
+      });
+
+      map.current.on("mouseenter", "country-heat-layer", (e) => {
         if (map.current) {
           map.current.getCanvas().style.cursor = "pointer";
+          
+          if (e.features && e.features[0]) {
+            const props = e.features[0].properties;
+            const coords = (e.features[0].geometry as GeoJSON.Point).coordinates.slice() as [number, number];
+            
+            if (props) {
+              const indexLabel = props.shadowPriceIndex < 0.9 ? "Value" : props.shadowPriceIndex > 1.1 ? "Premium" : "Parity";
+              const indexColor = props.shadowPriceIndex < 0.9 ? "#16A34A" : props.shadowPriceIndex > 1.1 ? "#DC2626" : "#CA8A04";
+              
+              const stabilityColor = props.macroStability === "Stable" ? "#16A34A" : props.macroStability === "Volatile" ? "#DC2626" : "#CA8A04";
+              
+              const html = `
+                <div style="font-family: Inter, sans-serif; padding: 4px;">
+                  <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px; color: #0F172A;">
+                    ${props.countryName}
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 11px; color: #64748B;">Parity Index</span>
+                    <span style="font-size: 12px; font-weight: 600; color: ${indexColor};">
+                      ${props.shadowPriceIndex.toFixed(2)}x
+                    </span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 11px; color: #64748B;">Adjusted Cost</span>
+                    <span style="font-size: 12px; font-weight: 500;">
+                      $${props.adjustedCost?.toFixed(2) || "N/A"}
+                    </span>
+                  </div>
+                  ${props.workHours ? `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 11px; color: #64748B;">Work Hours</span>
+                    <span style="font-size: 12px; font-weight: 500;">
+                      ${props.workHours}h
+                    </span>
+                  </div>
+                  ` : ''}
+                  <div style="font-size: 10px; color: #64748B; margin-top: 8px; border-top: 1px solid #E2E8F0; padding-top: 6px; display: flex; justify-content: space-between;">
+                    <span>
+                      <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${indexColor}; margin-right: 4px;"></span>
+                      ${indexLabel}
+                    </span>
+                    ${props.macroStability ? `
+                    <span style="color: ${stabilityColor}; font-weight: 500;">
+                      ${props.macroStability}
+                    </span>
+                    ` : ''}
+                  </div>
+                </div>
+              `;
+              
+              popup.setLngLat(coords).setHTML(html).addTo(map.current);
+            }
+          }
         }
       });
 
       map.current.on("mouseleave", "country-heat-layer", () => {
         if (map.current) {
           map.current.getCanvas().style.cursor = "";
+          popup.remove();
         }
       });
 

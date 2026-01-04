@@ -73,6 +73,7 @@
   /* Fonts */
   --font-sans: 'Inter', 'Open Sans', sans-serif;
   --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-logo: 'Playfair Display', 'Georgia', serif;
   --font-mono: 'Inter', 'JetBrains Mono', monospace;
   
   /* Radius - subtle 4px */
@@ -416,4 +417,17 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+}
+
+/* Mapbox Popup Styling */
+.country-fact-sheet-popup .mapboxgl-popup-content {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px 14px;
+  border: 1px solid hsl(214 20% 90%);
+}
+
+.country-fact-sheet-popup .mapboxgl-popup-tip {
+  border-top-color: white;
 }
