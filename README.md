@@ -2,7 +2,7 @@
 
 **Redefining global purchasing power through the lens of labor-time and policy volatility.**
 
-**Live Application:** [paritypulse.replit.app](https://paritypulse.replit.app/)  
+**Live Application:** [paritypulse.vercel.app](https://paritypulse.vercel.app/)  
 **Concept by:** Ritu Ann Roy
 
 ![ParityPulse Dashboard Screenshot](https://github.com/rituann/paritypulse/blob/main/image.png)
@@ -20,7 +20,7 @@ By anchoring global prices against the "Work-Hour" cost of professional and mini
 
 ### 1. Labor-Hour Valuation Logic
 The engine moves beyond nominal prices to calculate the **"Time Cost"** of a lifestyle. 
-* **Weighted Basket:** Items are categorized (Housing, Staples, Energy) and assigned economic weights via GPT-4o to reflect realistic expenditure.
+* **Weighted Basket:** Items are categorized (Housing, Staples, Energy) and assigned economic weights via Groq Llama to reflect realistic expenditure.
 * **Base Anchor:** Manama, Bahrain (2026 Professional Benchmark).
 
 ### 2. Tariff Sensitivity Simulator (Policy Shock)
@@ -47,10 +47,12 @@ The platform calculates the **Parity Index** using a proprietary ratio:
 ---
 
 ## Tech Stack
-* **UI/UX:** React.js, Tailwind CSS (Consulting-Standard Typography).
+* **UI/UX:** React.js, TypeScript, Tailwind CSS (Consulting-Standard Typography).
+* **Backend:** Node.js + Express, serverless via Vercel Functions.
 * **Mapping:** Mapbox GL JS (Custom light-v11 executive style).
-* **Intelligence:** OpenAI GPT-4o for semantic weighting and economic summaries.
-* **Data:** World Bank & ILO 2026 data benchmarks cached in PostgreSQL.
+* **Intelligence:** Groq Llama 3.1 for semantic weighting and economic summaries.
+* **Data:** World Bank & ILO 2026 data benchmarks (in-memory).
+* **Hosting:** Vercel
 
 ---
 For any queries, reach out to github.com/rituann
