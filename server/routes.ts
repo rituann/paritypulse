@@ -5,9 +5,9 @@ import { z } from "zod";
 import { storage } from "./storage";
 import type { ShadowPriceResult, TickerItem, MappedCommodity } from "@shared/schema";
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+const groq = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: process.env.GROQ_BASE_URL ?? "https://api.groq.com/openai/v1",
 });
 
 const COUNTRY_DATA = [
@@ -116,7 +116,7 @@ Respond with JSON in format:
 {"items": [{"userInput": "original input", "symbol": "commodity_symbol", "category": "housing|transport|staples|utilities|healthcare|luxury|other", "basePrice": estimated_usd_price}]}`;
 
   try {
-    const response = await openai.chat.completions.create({
+    const response = await groq.chat.completions.create({
       model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
@@ -357,7 +357,7 @@ Provide exactly 3 bullet points in this JSON format:
 
 Be specific, data-driven, and actionable. Avoid generic statements.`;
 
-      const response = await openai.chat.completions.create({
+      const response = await groq.chat.completions.create({
         model: "llama-3.1-8b-instant",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
