@@ -117,7 +117,7 @@ Respond with JSON in format:
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
       max_completion_tokens: 500,
@@ -358,7 +358,7 @@ Provide exactly 3 bullet points in this JSON format:
 Be specific, data-driven, and actionable. Avoid generic statements.`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "llama-3.1-8b-instant",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
         max_completion_tokens: 300,
